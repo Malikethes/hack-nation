@@ -42,7 +42,7 @@
         <div class="d-flex flex-wrap align-center justify-space-between mb-6">
           <h1 class="text-h3 font-weight-black">Dashboard</h1>
           <v-btn color="primary" prepend-icon="mdi-plus-circle" size="large">
-            Add New Item
+            <NuxtLink to="step_one">Add New Item</NuxtLink>
           </v-btn>
         </div>
 
