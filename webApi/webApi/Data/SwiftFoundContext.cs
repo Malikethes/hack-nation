@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using webApi.DataSeed;
 using webApi.Models;
 
 namespace webApi.Data
@@ -12,19 +11,37 @@ namespace webApi.Data
         }
 
         public DbSet<Item> Items { get; set; }
-        public DbSet<ItemLocation> ItemLocations { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Location> Locations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<ItemLocation>()
-                .HasOne(il => il.Item)
+            modelBuilder.Entity<Item>()
+                .HasOne(i => i.Category)
                 .WithMany()
-                .HasForeignKey(il => il.ItemId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(i => i.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Seed();
+            modelBuilder.Entity<Item>()
+                .HasOne(i => i.Location)
+                .WithMany()
+                .HasForeignKey(i => i.LocationId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Item>()
+                .Property(i => i.Status)
+                .HasConversion<int>();
+
+            modelBuilder.Entity<Item>()
+                .HasIndex(i => i.Status);
+
+            modelBuilder.Entity<Item>()
+                .HasIndex(i => i.CreatedAt);
+
+            modelBuilder.Entity<Item>()
+                .HasIndex(i => i.DateLost);
         }
     }
 }

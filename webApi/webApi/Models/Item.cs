@@ -7,36 +7,42 @@ namespace webApi.Models
     public class Item
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [MaxLength(500)]
-        public string? Data { get; set; }
+        [Required]
+        [MaxLength(200)]
+        public string Name { get; set; } = string.Empty;
 
         [Required]
-        public int Int { get; set; }
+        [MaxLength(1000)]
+        public string Description { get; set; } = string.Empty;
 
         [Required]
-        public float Float { get; set; }
+        [Column(TypeName = "datetime2")]
+        public DateTime DateLost { get; set; }
 
-        [MaxLength(255)]
-        public string? Mieszane { get; set; }
-
-        [MaxLength(100)]
-        public string? Czas { get; set; }
-
-        [MaxLength(100)]
-        public string? Dataczas { get; set; }
-
-        [MaxLength(50)]
-        public string? Pusta { get; set; }
-
-        [MaxLength(255)]
-        public string? Mieszane2 { get; set; }
+        [Column(TypeName = "datetime2")]
+        public DateTime? TimeLost { get; set; }
 
         [Required]
-        public bool Boolean { get; set; }
+        [ForeignKey(nameof(Category))]
+        public int CategoryId { get; set; }
 
-        public int? DuzoMissingowInt { get; set; }
+        public Category Category { get; set; } = null!;
+
+        [Required]
+        public byte[] Photo { get; set; } = Array.Empty<byte>();
+
+        [Required]
+        public ItemStatus Status { get; set; } = ItemStatus.Draft;
+
+        [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        [Required]
+        [ForeignKey(nameof(Location))]
+        public int LocationId { get; set; }
+
+        public Location Location { get; set; } = null!;
     }
 }
