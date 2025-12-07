@@ -1,6 +1,8 @@
 export const useFormSteps = () => {
   const currentStep = ref(1)
   const totalSteps = 5
+  const itemTypes = ref<any[]>([])
+  const { fetchCategories } = useApi()
 
   const formData = reactive({
     itemType: '',
@@ -34,13 +36,25 @@ export const useFormSteps = () => {
     'Zachodniopomorskie',
   ]
 
-  const itemTypes = [
-    { title: 'Wallet', value: 'wallet' },
-    { title: 'Phone', value: 'phone' },
-    { title: 'Keys', value: 'keys' },
-    { title: 'Bag', value: 'bag' },
-    { title: 'Other', value: 'other' },
-  ]
+  const loadCategories = async () => {
+    try {
+      const categories: any = await fetchCategories()
+      itemTypes.value = categories.map((cat: any) => ({
+        title: cat.name,
+        value: cat.name.toLowerCase()
+      }))
+    } catch (error) {
+      console.error('Failed to load categories:', error)
+      // Fallback to default categories if API fails
+      itemTypes.value = [
+        { title: 'Wallet', value: 'wallet' },
+        { title: 'Phone', value: 'phone' },
+        { title: 'Keys', value: 'keys' },
+        { title: 'Bag', value: 'bag' },
+        { title: 'Other', value: 'other' },
+      ]
+    }
+  }
 
   const rules = {
     required: (value: string) => !!value || 'This field is required',
@@ -119,5 +133,6 @@ export const useFormSteps = () => {
     nextStep,
     prevStep,
     goToStep,
+    loadCategories,
   }
 }

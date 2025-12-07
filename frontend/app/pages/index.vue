@@ -171,7 +171,8 @@ const {
   rules, 
   getStepConfig, 
   nextStep, 
-  prevStep 
+  prevStep,
+  loadCategories
 } = useFormSteps()
 
 const { submitItem, submitting, submitError } = useItemSubmit()
@@ -216,6 +217,10 @@ const handleEdit = () => {
 const handleCancel = () => {
   navigateTo('/dashboard')
 }
+
+onMounted(() => {
+  loadCategories()
+})
 </script>
 
 
