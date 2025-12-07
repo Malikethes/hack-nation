@@ -173,7 +173,9 @@ const {
   prevStep 
 } = useFormSteps()
 
-const valid =    ref(false)
+const { submitItem, submitting, submitError } = useItemSubmit()
+
+const valid = ref(false)
 const form = ref(null)
 
 const stepConfig = computed(() => getStepConfig(currentStep.value))
@@ -192,58 +194,10 @@ const handleNext = () => {
   }
 }
 
-const { createItem, createLocation, fetchCategories } = useApi()
-const submitting = ref(false)
-const submitError = ref('')
-
 const handleConfirm = async () => {
-  submitting.value = true
-  submitError.value = ''
-  
-  try {
-    // First, get all categories to find the matching one
-    const categories: any = await fetchCategories()
-    const category = categories.find((cat: any) => 
-      cat.name.toLowerCase() === formData.itemType.toLowerCase()
-    )
-    const categoryId = category?.id || 1 // Fallback to category 1 if not found
-
-    // Create location first
-    const locationData = {
-      longitude: parseFloat(formData.longitude) || 0,
-      latitude: parseFloat(formData.latitude) || 0,
-      address: formData.street || 'Unknown Address',
-      city: formData.city || 'Unknown City',
-      provinceId: 1,
-      postalCode: formData.postalCode || '00-000' // Format XX-XXX required by API
-    }
-    
-    console.log('Creating location with data:', locationData)
-    const location: any = await createLocation(locationData)
-    console.log('Location created:', location)
-    
-    // Create item with location using FormData
-    const formDataToSend = new FormData()
-    formDataToSend.append('name', formData.itemType || 'Unknown Item')
-    formDataToSend.append('description', formData.description || 'No description')
-    formDataToSend.append('dateLost', formData.dateDiscovery || new Date().toISOString().split('T')[0])
-    if (formData.timeDiscovery) {
-      formDataToSend.append('timeLost', formData.timeDiscovery)
-    }
-    formDataToSend.append('categoryId', categoryId.toString())
-    formDataToSend.append('locationId', location.id.toString())
-    formDataToSend.append('status', '1') // 0 = Draft
-    
-    console.log('Creating item with FormData')
-    await createItem(formDataToSend)
-    
-    // Success - redirect to dashboard
+  const result = await submitItem(formData)
+  if (result.success) {
     await navigateTo('/dashboard')
-  } catch (error: any) {
-    console.error('Failed to submit item:', error)
-    submitError.value = error.message || 'Failed to submit item. Please try again.'
-  } finally {
-    submitting.value = false
   }
 }
 
