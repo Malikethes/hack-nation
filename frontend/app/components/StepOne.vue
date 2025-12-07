@@ -43,6 +43,18 @@
       </v-card>
     </div>
 
+    <v-text-field
+      :model-value="formData.itemName"
+      @update:model-value="formData.itemName = $event"
+      label="Item Name"
+      variant="outlined"
+      color="primary"
+      placeholder="e.g., Black Leather Wallet, iPhone 13 Pro, etc."
+      class="mb-4"
+      :rules="[rules.required]"
+      prepend-inner-icon="mdi-tag"
+    />
+
     <v-select
       :model-value="formData.itemType"
       @update:model-value="formData.itemType = $event"

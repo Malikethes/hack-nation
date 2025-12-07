@@ -6,6 +6,7 @@ export const useFormSteps = () => {
 
   const formData = reactive({
     photo: null as File[] | null,
+    itemName: '',
     itemType: '',
     description: '',
     uniqueIdentifiers: '',

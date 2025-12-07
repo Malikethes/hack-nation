@@ -9,7 +9,7 @@
         
         <div class="summary-row">
           <span class="summary-label">Item Name</span>
-          <span class="summary-value">{{ formData.itemType || 'Not specified' }}</span>
+          <span class="summary-value">{{ formData.itemName || 'Not specified' }}</span>
         </div>
         <v-divider />
         
