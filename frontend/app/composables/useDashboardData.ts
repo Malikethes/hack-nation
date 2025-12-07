@@ -33,7 +33,8 @@ export const useDashboardData = () => {
             category: categoryName,
             dateAdded: new Date(item.dateLost || item.createdAt).toLocaleDateString('en-CA'),
             status: item.status === 1 ? 'Published' : 'Draft',
-            rawStatus: item.status
+            rawStatus: item.status,
+            photoUrl: item.photoUrl || 'https://via.placeholder.com/300'
           }
         })
       )

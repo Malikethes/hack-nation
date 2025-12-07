@@ -95,6 +95,12 @@
                 <span class="font-weight-medium">{{ item.id }}</span>
               </template>
 
+              <template #item.photo="{ item }">
+                <v-avatar size="48" rounded="lg" class="my-2">
+                  <v-img :src="item.photoUrl" cover />
+                </v-avatar>
+              </template>
+
               <template #item.status="{ item }">
                 <v-chip
                   :color="item.status === 'Published' ? 'success' : 'warning'"
@@ -104,26 +110,151 @@
                   {{ item.status }}
                 </v-chip>
               </template>
+
+              <template #item.actions="{ item }">
+                <div class="d-flex gap-2">
+                  <v-btn
+                    icon="mdi-eye"
+                    size="small"
+                    variant="text"
+                    color="primary"
+                    @click="viewItem(item)"
+                  />
+                  <v-btn
+                    v-if="item.rawStatus === 0"
+                    icon="mdi-pencil"
+                    size="small"
+                    variant="text"
+                    color="primary"
+                    @click="editItem(item)"
+                  />
+                  <v-btn
+                    v-if="item.rawStatus === 0"
+                    icon="mdi-delete"
+                    size="small"
+                    variant="text"
+                    color="error"
+                    @click="deleteItemConfirm(item)"
+                  />
+                </div>
+              </template>
             </v-data-table>
           </v-card-text>
         </v-card>
       </v-container>
     </v-main>
+
+    <!-- View Item Dialog -->
+    <v-dialog v-model="viewDialog" max-width="600">
+      <v-card v-if="selectedItem">
+        <v-card-title class="d-flex justify-space-between align-center">
+          <span class="text-h5">Item Details</span>
+          <v-btn icon="mdi-close" variant="text" @click="viewDialog = false" />
+        </v-card-title>
+        <v-divider />
+        <v-card-text class="pa-6">
+          <v-img
+            v-if="selectedItem.photoUrl"
+            :src="selectedItem.photoUrl"
+            class="mb-4 rounded-lg"
+            height="300"
+            cover
+          />
+          <div class="mb-3">
+            <p class="text-caption text-medium-emphasis">Item ID</p>
+            <p class="text-body-1 font-weight-medium">{{ selectedItem.id }}</p>
+          </div>
+          <div class="mb-3">
+            <p class="text-caption text-medium-emphasis">Description</p>
+            <p class="text-body-1">{{ selectedItem.description }}</p>
+          </div>
+          <div class="mb-3">
+            <p class="text-caption text-medium-emphasis">Category</p>
+            <p class="text-body-1">{{ selectedItem.category }}</p>
+          </div>
+          <div class="mb-3">
+            <p class="text-caption text-medium-emphasis">Date Added</p>
+            <p class="text-body-1">{{ selectedItem.dateAdded }}</p>
+          </div>
+          <div>
+            <p class="text-caption text-medium-emphasis">Status</p>
+            <v-chip
+              :color="selectedItem.status === 'Published' ? 'success' : 'warning'"
+              size="small"
+              variant="flat"
+            >
+              {{ selectedItem.status }}
+            </v-chip>
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <!-- Delete Confirmation Dialog -->
+    <v-dialog v-model="deleteDialog" max-width="400">
+      <v-card>
+        <v-card-title class="text-h6">Delete Item?</v-card-title>
+        <v-card-text>
+          Are you sure you want to delete this item? This action cannot be undone.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn variant="text" @click="deleteDialog = false">Cancel</v-btn>
+          <v-btn color="error" variant="flat" @click="confirmDelete">Delete</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
 <script setup lang="ts">
 const search = ref('')
+const deleteDialog = ref(false)
+const viewDialog = ref(false)
+const selectedItem = ref<any>(null)
 
 const headers = [
   { title: 'Item ID', key: 'id', sortable: true },
+  { title: 'Photo', key: 'photo', sortable: false },
   { title: 'Description', key: 'description', sortable: true },
   { title: 'Category', key: 'category', sortable: true },
   { title: 'Date Added', key: 'dateAdded', sortable: true },
   { title: 'Status', key: 'status', sortable: true },
+  { title: 'Actions', key: 'actions', sortable: false },
 ]
 
 const { items, loading, stats, loadData } = useDashboardData()
+const { deleteItem } = useApi()
+
+const viewItem = (item: any) => {
+  selectedItem.value = item
+  viewDialog.value = true
+}
+
+const editItem = (item: any) => {
+  // Navigate to edit page with item id
+  const itemId = item.id.replace('#', '')
+  navigateTo(`/?edit=${itemId}`)
+}
+
+const deleteItemConfirm = (item: any) => {
+  selectedItem.value = item
+  deleteDialog.value = true
+}
+
+const confirmDelete = async () => {
+  if (!selectedItem.value) return
+  
+  try {
+    const itemId = parseInt(selectedItem.value.id.replace('#', ''))
+    await deleteItem(itemId)
+    deleteDialog.value = false
+    selectedItem.value = null
+    await loadData()
+  } catch (error) {
+    console.error('Failed to delete item:', error)
+  }
+}
 
 onMounted(() => {
   loadData()

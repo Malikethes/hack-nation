@@ -94,6 +94,37 @@ export const useApi = () => {
         }
     }
 
+    const deleteItem = async (id: number) => {
+        try {
+        const response = await $fetch(`${baseURL}/Items/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'ngrok-skip-browser-warning': 'true'
+            }
+        })
+        return response
+        } catch (error) {
+        console.error('Error deleting item:', error)
+        throw error
+        }
+    }
+
+    const updateItem = async (id: number, itemData: any) => {
+        try {
+        const response = await $fetch(`${baseURL}/Items/${id}`, {
+            method: 'PUT',
+            body: itemData,
+            headers: {
+                'ngrok-skip-browser-warning': 'true'
+            }
+        })
+        return response
+        } catch (error) {
+        console.error('Error updating item:', error)
+        throw error
+        }
+    }
+
     return {
         fetchCategoriesById,
         createLocation,
@@ -101,5 +132,7 @@ export const useApi = () => {
         fetchCategories,
         fetchLocations,
         createItem,
+        deleteItem,
+        updateItem,
     }
 }
