@@ -8,7 +8,13 @@
         <v-divider class="mb-4" />
         
         <div class="summary-row">
-          <span class="summary-label">Category / Item Type</span>
+          <span class="summary-label">Item Name</span>
+          <span class="summary-value">{{ formData.itemType || 'Not specified' }}</span>
+        </div>
+        <v-divider />
+        
+        <div class="summary-row">
+          <span class="summary-label">Category</span>
           <span class="summary-value">{{ formData.itemType || 'Not specified' }}</span>
         </div>
         <v-divider />
@@ -52,15 +58,33 @@
               </div>
               <span class="location-value">{{ formData.timeDiscovery || 'Not specified' }}</span>
             </div>
+            <div class="mb-5">
+              <div class="d-flex mb-2">
+                <span class="location-label">Coordinates</span>
+              </div>
+              <span class="location-value">{{ formData.latitude }}, {{ formData.longitude }}</span>
+            </div>
+            <v-btn
+              color="primary"
+              variant="tonal"
+              prepend-icon="mdi-map-marker"
+              @click="openMapLink"
+              block
+            >
+              View on Google Maps
+            </v-btn>
           </v-col>
           <v-col cols="12" md="6">
-            <v-card elevation="0" rounded="lg" class="overflow-hidden" height="250">
-              <v-img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAY574PyvwW_vqNGAijaKTUlhov6b33stomHgh_A-xVaPYLJpqmg1D1Wkp54easDLiCK8vQGLLu9QCgS4eHhJKWDTDT1TxI0rDkGDboVo02v5XXV_K_x79K2NGTQ3pmIP2Sb1Vlp4vX9ywJjNNS57tM4HjAVqxL1n8scZOwCAmxh4IUpMMSG-Ndoh9NYka6L3SanrFg-WihVnnyaGuH9YRXKja6XsIvzGgfyNDbW-6k4062NDgD_UL1kRkwViHRFNSkzLSPtpt5xEA"
-                alt="Map"
-                cover
+            <v-card elevation="0" rounded="lg" class="overflow-hidden" height="300">
+              <iframe
+                :src="mapUrl"
+                width="100%"
                 height="100%"
-              />
+                style="border:0;"
+                allowfullscreen
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+              ></iframe>
             </v-card>
           </v-col>
         </v-row>
@@ -129,12 +153,24 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   formData: any
   submitting?: boolean
 }>()
 
 defineEmits(['confirm', 'edit', 'cancel'])
+
+const mapUrl = computed(() => {
+  const lat = props.formData.latitude || '52.2297'
+  const lng = props.formData.longitude || '21.0122'
+  return `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${lat},${lng}&zoom=15`
+})
+
+const openMapLink = () => {
+  const lat = props.formData.latitude || '52.2297'
+  const lng = props.formData.longitude || '21.0122'
+  window.open(`https://www.google.com/maps?q=${lat},${lng}`, '_blank')
+}
 </script>
 
 <style scoped>

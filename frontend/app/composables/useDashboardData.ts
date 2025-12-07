@@ -29,6 +29,7 @@ export const useDashboardData = () => {
           
           return {
             id: `#${item.id}`,
+            name: item.name || 'Unknown Item',
             description: item.description || item.name || 'No description',
             category: categoryName,
             dateAdded: new Date(item.dateLost || item.createdAt).toLocaleDateString('en-CA'),

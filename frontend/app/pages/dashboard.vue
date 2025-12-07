@@ -216,6 +216,7 @@ const selectedItem = ref<any>(null)
 const headers = [
   { title: 'Item ID', key: 'id', sortable: true },
   { title: 'Photo', key: 'photo', sortable: false },
+  { title: 'Name', key: 'name', sortable: true },
   { title: 'Description', key: 'description', sortable: true },
   { title: 'Category', key: 'category', sortable: true },
   { title: 'Date Added', key: 'dateAdded', sortable: true },
