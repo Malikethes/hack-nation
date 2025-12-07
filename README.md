@@ -16,22 +16,12 @@ A modern web platform connecting people with their lost items. Built with Nuxt 4
 **Frontend:** Nuxt 4.2, TypeScript, Vuetify 3, Google Maps API  
 **Backend:** .NET 8, SQL Server, Entity Framework Core, Cloudinary
 
-## Setup
+## Frontend Setup
 
 Make sure to install dependencies:
 
 ```bash
-# npm
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
 ## Development Server
@@ -39,17 +29,9 @@ bun install
 Start the development server on `http://localhost:3000`:
 
 ```bash
-# npm
+
 npm run dev
 
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
 ## Production
@@ -57,33 +39,22 @@ bun run dev
 Build the application for production:
 
 ```bash
-# npm
+
 npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
 ```
 
 Locally preview production build:
 
 ```bash
-# npm
 npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+## Backend Setup
+```bash
+cd webApi/webApi
+dotnet restore
+dotnet ef database update
+dotnet run
+```
